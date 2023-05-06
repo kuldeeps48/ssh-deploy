@@ -15,6 +15,7 @@ const remoteCmd = async (content, privateKeyPath, isRequired, label) => new Prom
   const filename = `local_ssh_script-${label}.sh`;
   try {
     writeToFile({ dir: githubWorkspace, filename, content });
+    console.log('✅ [CMD] Remote script created.', filename, content)
     const dataLimit = 10000;
     const rsyncStdout = (process.env.RSYNC_STDOUT || '').substring(0, dataLimit);
     console.log(`Executing remote script: ssh -i ${privateKeyPath} ${sshServer}`);
@@ -23,6 +24,7 @@ const remoteCmd = async (content, privateKeyPath, isRequired, label) => new Prom
       (err, data = '', stderr = '') => {
         if (err) {
           const message = `⚠️ [CMD] Remote script failed: ${err.message}`;
+          console.error(err);
           console.warn(`${message} \n`, data, stderr);
           handleError(message, isRequired, reject);
         } else {
